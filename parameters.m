@@ -1,3 +1,15 @@
+%% 1) Plotar cada canal individualmente %%
+
+% Acessar a matriz 'data' dentro da estrutura
+%data = EEG.data;
+
+% Plotar o canal 2
+%figure;
+%plot(data(2, :));
+%xlabel('Amostras');
+%ylabel('Amplitude');
+%title('Sinal do Canal 2');
+
 %% 2) Separar em intervalos de 5 segundos %%
 
 % Inicializar a célula que armazenará os intervalos
@@ -80,8 +92,7 @@ disp('Processamento da parte 2 completo!');
 
 %% 3) PSD - Band Power Analysis %%
 
-% Número de amostras e frequência de amostragem (definir conforme o seu sinal EEG)
-fs = 500;  % Exemplo de taxa de amostragem (250 Hz), ajustar conforme necessário
+fs = 500;  % Exemplo de taxa de amostragem, ajustar conforme necessário
 
 % Definir as bandas de frequência
 freq_bands = [1 4; 4 8; 8 13; 13 30; 30 50];
@@ -166,8 +177,40 @@ for i = 1:length(intervals)
 
         % Armazenar a potência de banda no campo 'band_power' do intervalo atual
         intervals{i}.band_power{k} = band_power_block;
+
     end
 end
+
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\bandpower.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.band_power);
+    for k = 1:num_blocks
+        % Extrair os dados de cada banda (1x58 single) sem transpor ainda
+        delta_data = intervals{i}.band_power{k}.delta;
+        theta_data = intervals{i}.band_power{k}.theta;
+        alpha_data = intervals{i}.band_power{k}.alpha;
+        beta_data = intervals{i}.band_power{k}.beta;
+        gamma_data = intervals{i}.band_power{k}.gamma;
+        
+        % Organizar os dados em colunas (cada coluna é uma banda)
+        block_data = [delta_data; theta_data; alpha_data; beta_data; gamma_data];
+        
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data, block_data];  % Adiciona cada bloco como novas colunas
+    end
+end
+
+% Transpor todos os dados para obter 5 colunas (uma para cada banda) e 4524 linhas
+final_data = all_data';
+
+% Exportar a matriz completa transposta para o arquivo Excel
+writematrix(final_data, filename, 'Sheet', 1);
 
 % Para plotar o PSD dos intervalos completos
 for i = 1:length(intervals)
@@ -248,6 +291,37 @@ for i = 1:length(intervals) %indo de 1 a 20, percorrendo todos os intervalos mai
     end
 end
 
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\rbp.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.band_power);
+    for k = 1:num_blocks
+        % Extrair os dados de cada banda (1x58 single) sem transpor ainda
+        delta_data = intervals{i}.rbp{k}.delta;
+        theta_data = intervals{i}.rbp{k}.theta;
+        alpha_data = intervals{i}.rbp{k}.alpha;
+        beta_data = intervals{i}.rbp{k}.beta;
+        gamma_data = intervals{i}.rbp{k}.gamma;
+        
+        % Organizar os dados em colunas (cada coluna é uma banda)
+        block_data = [delta_data; theta_data; alpha_data; beta_data; gamma_data];
+        
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data, block_data];  % Adiciona cada bloco como novas colunas
+    end
+end
+
+% Transpor todos os dados para obter 5 colunas (uma para cada banda) e 4524 linhas
+final_data = all_data';
+
+% Exportar a matriz completa transposta para o arquivo Excel
+writematrix(final_data, filename, 'Sheet', 1);
+
 disp('Processamento da parte 4 completo!');
 
 %% 5) Peak frequency and Power  %%
@@ -287,6 +361,34 @@ for i = 1:length(intervals)
     end
 end
 
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\peakFrequecyAndPower.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.band_power);
+    for k = 1:num_blocks
+        % Extrair os dados de cada banda (1x58 single) sem transpor ainda
+        alpha_data_pf = intervals{i}.alpha_peak_frequency{k};
+        alpha_data_pp = intervals{i}.alpha_peak_power{k};
+        
+        % Organizar os dados em colunas (cada coluna é uma banda)
+        block_data = [alpha_data_pf; alpha_data_pp];
+        
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data, block_data];  % Adiciona cada bloco como novas colunas
+    end
+end
+
+% Transpor todos os dados para obter 5 colunas (uma para cada banda) e 4524 linhas
+final_data = all_data';
+
+% Exportar a matriz completa transposta para o arquivo Excel
+writematrix(final_data, filename, 'Sheet', 1);
+
 disp('Processamento da parte 5 completo!');
 
 %% 6) Power Ratio %%
@@ -322,6 +424,33 @@ for i = 1:length(intervals) %indo de 1 a 20, percorrendo todos os intervalos mai
         intervals{i}.power_ratio{k} = power_ratio_block;
     end
 end
+
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\powerRatio.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.band_power);
+    for k = 1:num_blocks
+        % Extrair os dados de cada banda (1x58 single) sem transpor ainda
+        alpha_data = intervals{i}.power_ratio{k}.ratio;
+        
+        % Organizar os dados em colunas (cada coluna é uma banda)
+        block_data = alpha_data;
+        
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data, block_data];  % Adiciona cada bloco como novas colunas
+    end
+end
+
+% Transpor todos os dados para obter 5 colunas (uma para cada banda) e 4524 linhas
+final_data = all_data';
+
+% Exportar a matriz completa transposta para o arquivo Excel
+writematrix(final_data, filename, 'Sheet', 1);
 
 disp('Processamento da parte 6 completo!');
 
@@ -368,6 +497,40 @@ for i = 1:length(intervals)
         end
     end
 end
+
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\psdEntropy.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Nomes das bandas
+band_names = {'Delta', 'Theta', 'Alpha', 'Beta', 'Gamma'};
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.psd_entropy.entropy_Delta);  % Número de blocos dentro de cada intervalo
+    for k = 1:num_blocks
+        % Extrair os dados de cada banda (1x58 single) sem transpor ainda
+        delta_data = intervals{i}.psd_entropy.entropy_Delta{k};
+        theta_data = intervals{i}.psd_entropy.entropy_Theta{k};
+        alpha_data = intervals{i}.psd_entropy.entropy_Alpha{k};
+        beta_data = intervals{i}.psd_entropy.entropy_Beta{k};
+        gamma_data = intervals{i}.psd_entropy.entropy_Gamma{k};
+        
+        % Organizar os dados em colunas (cada coluna é uma banda)
+        block_data = [delta_data; theta_data; alpha_data; beta_data; gamma_data];
+        
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data, block_data];  % Adiciona cada bloco como novas colunas
+    end
+end
+
+% Transpor todos os dados para obter 5 colunas (uma para cada banda) e 4524 linhas
+final_data = all_data';
+
+% Exportar a matriz completa transposta para o arquivo Excel
+writematrix(final_data, filename, 'Sheet', 1);
 
 % Exibir os resultados de entropia espectral para verificação
 % for i = 1:length(intervals)
@@ -423,6 +586,30 @@ for i = 1:length(intervals)
         intervals{i}.SEF.(['block_' num2str(k)]) = block_sef;
     end
 end
+
+% Nome do arquivo Excel
+filename = 'C:\Users\lucas\source\SEF_data.xlsx';
+
+% Inicializar uma matriz para armazenar todos os dados em formato de 58xN
+all_data = [];  % Esta matriz vai armazenar todos os dados para exportação
+
+% Loop para acessar os dados
+for i = 1:length(intervals)
+    num_blocks = length(intervals{i}.band_power);  % Número de blocos dentro de cada intervalo
+    for k = 1:num_blocks
+        block_name = sprintf('block_%d', k);
+        % Extrair os dados de cada bloco
+        for j = 1:size(EEG_block, 1)
+        sef_data_struct = intervals{i}.SEF.(block_name)(j).SEF_50;
+        % Concatenar os dados do bloco na matriz geral
+        all_data = [all_data; sef_data_struct];  % Adiciona cada bloco como nova linha
+        end
+    end
+end
+
+% Exportar a matriz completa para o arquivo Excel
+writematrix(all_data, filename, 'Sheet', 1);
+
 
 % Exibir os resultados do SEF para verificação
 % for i = 1:length(intervals)
